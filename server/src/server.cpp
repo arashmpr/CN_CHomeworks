@@ -1,7 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(std::vector <User*> _users, std::vector <std::string> _protected_files) {
-    users = _users;
+Server::Server(std::vector <std::string> _protected_files) {
     protected_files = _protected_files;
 }
 

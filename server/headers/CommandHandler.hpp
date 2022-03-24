@@ -10,6 +10,8 @@
 #include <unistd.h>
 
 #include "User.hpp"
+#include "UserHandler.hpp"
+#include "Exception.hpp"
 
 #define BUFFER_SIZE 1024
 
@@ -23,6 +25,13 @@ class CommandHandler {
         char *cmd_line;
         char *cmd;
 
+        User* found_user;
+
+        bool is_user_logged_in;
+        bool is_user_ready_to_enter_password;
+
+        void log_in_handler();
+        void password_handler();
         void pwd_handler();
         void mkd_handler(char *file_path);
         void delete_file_handler(char *file_path);
