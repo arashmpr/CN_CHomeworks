@@ -19,7 +19,6 @@ class CommandHandler {
         void run_command();
     private:
         int client_fd;
-        // User *user;
 
         char *cmd_line;
         char *cmd;

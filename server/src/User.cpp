@@ -1,6 +1,6 @@
 #include "User.hpp"
 
-User::User(char *_username, char *_password, bool _is_admin) {
+User::User(std::string _username, std::string _password, bool _is_admin) {
     username = _username;
     password = _password;
     is_admin = _is_admin;
