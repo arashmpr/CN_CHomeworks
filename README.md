@@ -25,4 +25,3 @@ here is a table of valid instructions that you can use as a client after running
 | retr <name> | downloads the given file from server | ** not done ** |
 | help | shows a list of all the commands you can use in this project | help |
 | quit | you can log out using this command | quit |
-
