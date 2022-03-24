@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 #include <CommandHandler.hpp>
+#include <ConfigParser.hpp>
 
 #define BUFFER_SIZE 1024
 #define COMMAND_CHANNEL_PORT 9009
@@ -19,6 +20,9 @@
 int run_socket(int port);
 
 int main() {
+    ConfigParser *config_file = new ConfigParser("config.json");
+    config_file -> print_user();
+
     int command_fd = run_socket(COMMAND_CHANNEL_PORT);
     int data_fd = run_socket(DATA_CHANNEL_PORT);
 
