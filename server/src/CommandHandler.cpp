@@ -1,6 +1,6 @@
 #include "CommandHandler.hpp"
 
-CommandHandler::CommandHandler(int _client_fd, std::string _cmd_line) {
+CommandHandler::CommandHandler(int _client_fd, char* _cmd_line) {
     client_fd = _client_fd;
     cmd_line = _cmd_line;
 }
@@ -22,12 +22,12 @@ void CommandHandler::run_command() {
             exit(1);
         } 
         else if (strcmp(cmd_line, "mkd") == 0) {
-            std::string file_path =  strtok(NULL," ");
+            char* file_path =  strtok(NULL," ");
             mkd_handler(file_path);
         }   
         else if (strcmp(cmd_line, "dele") == 0) {
-            std::string mode = strtok(NULL, " ");
-            std::string path_file = strtok(NULL, " ");
+            char* mode = strtok(NULL, " ");
+            char* path_file = strtok(NULL, " ");
             if (strcmp(mode, "-f") == 0) {
                 delete_file_handler(path_file);
             } else if (strcmp(mode, "-d") == 0) {
@@ -36,11 +36,11 @@ void CommandHandler::run_command() {
         } else if (strcmp(cmd_line, "ls") == 0) {
             ls_handler();
         } else if (strcmp(cmd_line, "cwd") == 0) {
-            std::string path_file = strtok(NULL, " ");
+            char* path_file = strtok(NULL, " ");
             cwd_handler(path_file);
         } else if (strcmp(cmd_line, "rename") == 0) {
-            std::string old_name = strtok(NULL, " ");
-            std::string new_name = strtok(NULL, " ");
+            char* old_name = strtok(NULL, " ");
+            char* new_name = strtok(NULL, " ");
             rename_file_handler(old_name, new_name);
         }
     } catch(int error_num) {
@@ -51,7 +51,7 @@ void CommandHandler::run_command() {
 }
 
 void CommandHandler::log_in_handler() {
-    std::string username = strtok(NULL, " ");
+    char* username = strtok(NULL, " ");
     if (is_user_logged_in) {
         std::cout << "User already logged in!" << std::endl;
     } else {
@@ -67,7 +67,7 @@ void CommandHandler::log_in_handler() {
 }
 
 void CommandHandler::password_handler() {
-    std::string password = strtok(NULL, " ");
+    char* password = strtok(NULL, " ");
 
     std::string found_user_password = found_user -> get_password();
 
@@ -93,7 +93,7 @@ void CommandHandler::pwd_handler() {
     }
 }
 
-void CommandHandler::mkd_handler(std::string path_file) {
+void CommandHandler::mkd_handler(char* path_file) {
     if(!is_user_logged_in) {
         throw INVALID_USERNAME_OR_PASSWORD;
     }
@@ -106,7 +106,7 @@ void CommandHandler::mkd_handler(std::string path_file) {
     printf("%s created.\n", path_file);
 }
 
-void CommandHandler::delete_file_handler(std::string path_file) {
+void CommandHandler::delete_file_handler(char* path_file) {
     if(!is_user_logged_in) {
         throw INVALID_USERNAME_OR_PASSWORD;
     }
@@ -120,7 +120,7 @@ void CommandHandler::delete_file_handler(std::string path_file) {
 
 }
 
-void CommandHandler::delete_dir_handler(std::string path_file) {
+void CommandHandler::delete_dir_handler(char* path_file) {
     if(!is_user_logged_in) {
         throw INVALID_USERNAME_OR_PASSWORD;
     }
@@ -155,7 +155,7 @@ void CommandHandler::ls_handler() {
     }
 }
 
-void CommandHandler::cwd_handler(std::string path_file) {
+void CommandHandler::cwd_handler(char* path_file) {
     if(!is_user_logged_in) {
         throw INVALID_USERNAME_OR_PASSWORD;
     }
@@ -168,7 +168,7 @@ void CommandHandler::cwd_handler(std::string path_file) {
     printf("Successful change.\n");
 }
 
-void CommandHandler::rename_file_handler(const std::string old_name, const std::string new_name) {
+void CommandHandler::rename_file_handler(const char* old_name, const char* new_name) {
     if(!is_user_logged_in) {
         throw INVALID_USERNAME_OR_PASSWORD;
     }

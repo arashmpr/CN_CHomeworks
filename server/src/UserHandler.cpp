@@ -2,7 +2,7 @@
 
 std::vector<User*> UserHandler::users;
 
-User* UserHandler::find_user(std::string username) {
+User* UserHandler::find_user(char* username) {
     for(User* user : UserHandler::users)
     {
         if(user->get_username() == username)
