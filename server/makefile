@@ -8,24 +8,33 @@ TARGET = server.out
 
 OBJECTS = \
 	$(BUILD_DIR)/server.o \
-	$(BUILD_DIR)/CommandHandler.o
+	$(BUILD_DIR)/CommandHandler.o \
+	$(BUILD_DIR)/User.o
 
-CommandHandlerDeps = $(SRC_DIR)/CommandHandler.cpp \
-	$(HEADERS_DIR)/CommandHandler.hpp
+UserDeppendencies = $(SRC_DIR)/User.cpp \
+	$(HEADERS_DIR)/User.hpp
 
-ServerDeps = $(SRC_DIR)/server.cpp \
-	$(HEADERS_DIR)/CommandHandler.hpp
+CommandHandlerDeppendencies = $(SRC_DIR)/CommandHandler.cpp \
+	$(HEADERS_DIR)/CommandHandler.hpp \
+	$(HEADERS_DIR)/User.hpp
+
+ServerDeppendencies = $(SRC_DIR)/server.cpp \
+	$(HEADERS_DIR)/CommandHandler.hpp \
+	$(HEADERS_DIR)/User.hpp
 
 all: $(BUILD_DIR) $(TARGET)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-$(BUILD_DIR)/server.o: $(ServerDeps)
+$(BUILD_DIR)/server.o: $(ServerDeppendencies)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/server.cpp -o $(BUILD_DIR)/server.o	
 
-$(BUILD_DIR)/CommandHandler.o: $(CommandHandlerDeps)
+$(BUILD_DIR)/CommandHandler.o: $(CommandHandlerDeppendencies)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/CommandHandler.cpp -o $(BUILD_DIR)/CommandHandler.o
+
+$(BUILD_DIR)/User.o: $(UserDeppendencies)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/User.cpp -o $(BUILD_DIR)/User.o	
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET)

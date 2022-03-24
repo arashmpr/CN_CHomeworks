@@ -41,7 +41,7 @@ int main() {
 
         while(RECIEVEING) {
             recv(client_fd, buffer, BUFFER_SIZE, 0);
-            CommandHandler *command_handler = new CommandHandler(buffer);
+            CommandHandler *command_handler = new CommandHandler(client_fd, buffer);
             command_handler -> run_command();
 
         }

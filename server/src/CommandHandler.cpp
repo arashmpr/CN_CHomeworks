@@ -1,14 +1,7 @@
 #include "CommandHandler.hpp"
 
-void pwd_handler();
-void mkd(char *file_path);
-void delete_file(char *file_path);
-void delete_dir(char *file_path);
-void ls();
-void cwd(char *path_file);
-void rename_file(const char *old_name, const char *new_name);
-
-CommandHandler::CommandHandler(char *_cmd_line) {
+CommandHandler::CommandHandler(int _client_fd, char *_cmd_line) {
+    client_fd = _client_fd;
     cmd_line = _cmd_line;
 }
 
@@ -21,29 +14,29 @@ void CommandHandler::run_command() {
     } 
     else if (strcmp(cmd_line, "mkd") == 0) {
         char *file_path =  strtok(NULL," ");
-        mkd(file_path);
+        mkd_handler(file_path);
     }
     else if (strcmp(cmd_line, "dele") == 0) {
         char *mode = strtok(NULL, " ");
         char *path_file = strtok(NULL, " ");
         if (strcmp(mode, "-f") == 0) {
-            delete_file(path_file);
+            delete_file_handler(path_file);
         } else if (strcmp(mode, "-d") == 0) {
-            delete_dir(path_file);
+            delete_dir_handler(path_file);
         }
     } else if (strcmp(cmd_line, "ls") == 0) {
-        ls();
+        ls_handler();
     } else if (strcmp(cmd_line, "cwd") == 0) {
         char *path_file = strtok(NULL, " ");
-        cwd(path_file);
+        cwd_handler(path_file);
     } else if (strcmp(cmd_line, "rename") == 0) {
         char *old_name = strtok(NULL, " ");
         char *new_name = strtok(NULL, " ");
-        rename_file(old_name, new_name);
+        rename_file_handler(old_name, new_name);
     }
 }
 
-void pwd_handler() {
+void CommandHandler::pwd_handler() {
     char directory[BUFFER_SIZE];
 
     if(getcwd(directory, sizeof(directory)) != NULL) {
@@ -53,7 +46,7 @@ void pwd_handler() {
     }
 }
 
-void mkd(char *path_file) {
+void CommandHandler::mkd_handler(char *path_file) {
        int status = mkdir(path_file, 0777);
        if (status == -1) {
            perror("mkdir");
@@ -62,7 +55,7 @@ void mkd(char *path_file) {
        printf("%s created.\n", path_file);
 }
 
-void delete_file(char *path_file) {
+void CommandHandler::delete_file_handler(char *path_file) {
     int status = unlink(path_file);
     if (status == -1) {
         perror("unlink");
@@ -72,7 +65,7 @@ void delete_file(char *path_file) {
 
 }
 
-void delete_dir(char *path_file) {
+void CommandHandler::delete_dir_handler(char *path_file) {
     int status = rmdir(path_file);
     if (status == -1) {
         perror("rmdir");
@@ -81,7 +74,7 @@ void delete_dir(char *path_file) {
     printf("%s deleted.\n", path_file);
 }
 
-void ls() {
+void CommandHandler::ls_handler() {
     DIR *parent_dir;
     struct dirent *current_dir;
     parent_dir = opendir(".");
@@ -99,7 +92,7 @@ void ls() {
     }
 }
 
-void cwd(char *path_file) {
+void CommandHandler::cwd_handler(char *path_file) {
     int status = chdir(path_file);
     if (status == -1) {
         perror("chdir");
@@ -108,7 +101,7 @@ void cwd(char *path_file) {
     printf("Successful change.\n");
 }
 
-void rename_file(const char *old_name, const char *new_name) {
+void CommandHandler::rename_file_handler(const char *old_name, const char *new_name) {
     int status = rename(old_name, new_name);
     if (status == -1) {
         perror("rename");
