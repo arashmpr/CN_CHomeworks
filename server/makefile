@@ -10,7 +10,9 @@ OBJECTS = \
 	$(BUILD_DIR)/Server.o \
 	$(BUILD_DIR)/CommandHandler.o \
 	$(BUILD_DIR)/User.o \
+	$(BUILD_DIR)/UserHandler.o \
 	$(BUILD_DIR)/ConfigParser.o \
+	$(BUILD_DIR)/Exception.o \
 	$(BUILD_DIR)/main.o
 
 ConfigParserDeppendencies = $(SRC_DIR)/ConfigParser.cpp \
@@ -20,6 +22,13 @@ ConfigParserDeppendencies = $(SRC_DIR)/ConfigParser.cpp \
 
 UserDeppendencies = $(SRC_DIR)/User.cpp \
 	$(HEADERS_DIR)/User.hpp
+
+ExceptionDeppendencies = $(SRC_DIR)/Exception.cpp \
+	$(HEADERS_DIR)/Exception.hpp
+
+UserHandlerDeppendencies = $(SRC_DIR)/UserHandler.cpp \
+	$(HEADERS_DIR)/UserHandler.hpp \
+	$(HEADERS_DIR)/Exception.hpp
 
 CommandHandlerDeppendencies = $(SRC_DIR)/CommandHandler.cpp \
 	$(HEADERS_DIR)/CommandHandler.hpp \
@@ -33,6 +42,7 @@ ServerDeppendencies = $(SRC_DIR)/server.cpp \
 MainDeppendencies = $(SRC_DIR)/main.cpp \
 	$(HEADERS_DIR)/Server.hpp \
 	$(HEADERS_DIR)/User.hpp \
+	$(HEADERS_DIR)/UserHandler.hpp \
 	$(HEADERS_DIR)/ConfigParser.hpp
 
 
@@ -54,8 +64,14 @@ $(BUILD_DIR)/CommandHandler.o: $(CommandHandlerDeppendencies)
 $(BUILD_DIR)/User.o: $(UserDeppendencies)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/User.cpp -o $(BUILD_DIR)/User.o
 
+$(BUILD_DIR)/UserHandler.o: $(UserHandlerDeppendencies)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/UserHandler.cpp -o $(BUILD_DIR)/UserHandler.o
+
 $(BUILD_DIR)/ConfigParser.o: $(ConfigParserDeppendencies)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/ConfigParser.cpp -o $(BUILD_DIR)/ConfigParser.o	
+
+$(BUILD_DIR)/Exception.o: $(ExceptionDeppendencies)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/Exception.cpp -o $(BUILD_DIR)/Exception.o	
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET)

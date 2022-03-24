@@ -23,13 +23,12 @@
 
 class Server {
     public:
-        Server(std::vector <User*> _users, std::vector <std::string> _protected_files);
+        Server(std::vector <std::string> _protected_files);
         void run();
     
     private:
         int command_fd, data_fd;
 
-        std::vector <User*> users;
         std::vector <std::string> protected_files;
 
 
