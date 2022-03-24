@@ -7,31 +7,29 @@
 #include <unistd.h>
 
 #define BUFFER_SIZE 1024
-#define PORT 8080
+#define COMMAND_CHANNEL_PORT 9009
+#define DATA_CHANNEL_PORT 9099
 #define RUNNING 1
 #define RECIEVEING 1
 
-void pwd(int clientfd);
-
 int main() {
     //declaring important data
-    char *ip = "127.0.0.1";
-    int clientfd;
+    int client_fd;
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
 
     //Creating a server socket
-    if(!(clientfd = socket(AF_INET, SOCK_STREAM, 0))) {
+    if(!(client_fd = socket(AF_INET, SOCK_STREAM, 0))) {
         printf("Failed to create socket!\nExiting..");
         exit(1);
     }
 
     //Assigning attributes to server_address
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr(ip);
+    server_addr.sin_port = htons(COMMAND_CHANNEL_PORT);
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    if ((connect(clientfd, (struct sockaddr *)&server_addr, sizeof(server_addr))) < 0) {
+    if ((connect(client_fd, (struct sockaddr *)&server_addr, sizeof(server_addr))) < 0) {
 		printf("Failed to connect to the server!\nExiting\n");
         exit(1);
     }
@@ -46,10 +44,10 @@ int main() {
 		char* cmd = strtok(cmd_line," ");
 
         if (strcmp(cmd, "pwd") == 0) {
-            send(clientfd, buffer, BUFFER_SIZE, 0);
+            send(client_fd, buffer, BUFFER_SIZE, 0);
             exit(1);
         } else {
-            send(clientfd, buffer, BUFFER_SIZE, 0);
+            send(client_fd, buffer, BUFFER_SIZE, 0);
         }
     }
 
