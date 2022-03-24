@@ -1,42 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "Server.hpp"
 
-#include <CommandHandler.hpp>
-#include <ConfigParser.hpp>
+Server::Server(std::vector <User*> _users, std::vector <std::string> _protected_files) {
+    users = _users;
+    protected_files = _protected_files;
+}
 
-#define BUFFER_SIZE 1024
-#define COMMAND_CHANNEL_PORT 9009
-#define DATA_CHANNEL_PORT 9099
-#define RUNNING 1
-#define RECIEVEING 1
+void Server::run() {
+    command_fd = run_socket(COMMAND_CHANNEL_PORT);
+    data_fd = run_socket(DATA_CHANNEL_PORT);
 
-int run_socket(int port);
-
-int main() {
-    ConfigParser *config_file = new ConfigParser("config.json");
-    config_file -> print_user();
-
-    int command_fd = run_socket(COMMAND_CHANNEL_PORT);
-    int data_fd = run_socket(DATA_CHANNEL_PORT);
-
-    struct sockaddr_in address;
+    struct sockaddr_in client_address;
 
     char buffer[BUFFER_SIZE];
 
     while(RUNNING) {
         int client_fd;
-        int addr_len = sizeof(address);
-        printf("Wainting for connection...\n");
+        int addr_len = sizeof(client_address);
+        printf("Waiting for connection...\n");
         
         //accepting a new connection
-        if(!(client_fd = accept(command_fd, (struct sockaddr*) &address, (socklen_t*) &addr_len))) {
+        if(!(client_fd = accept(command_fd, (struct sockaddr*) &client_address, (socklen_t*) &addr_len))) {
             printf("Couldn't accept the client!\n");
             continue;
         }
@@ -47,17 +30,13 @@ int main() {
             recv(client_fd, buffer, BUFFER_SIZE, 0);
             CommandHandler *command_handler = new CommandHandler(client_fd, buffer);
             command_handler -> run_command();
-
         }
-
         close(client_fd);
     }
     close(command_fd);
-    close(data_fd);
-    return 0;
 }
 
-int run_socket(int port) {
+int Server::run_socket(int port) {
     //declaring important data
     int fd;
     struct sockaddr_in address;

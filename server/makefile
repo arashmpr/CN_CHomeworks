@@ -4,13 +4,14 @@ SRC_DIR = src
 HEADERS_DIR = headers
 CFLAGS = -std=c++17 -pthread -Wall -Werror -I$(HEADERS_DIR)
 
-TARGET = server.out
+TARGET = server
 
 OBJECTS = \
-	$(BUILD_DIR)/server.o \
+	$(BUILD_DIR)/Server.o \
 	$(BUILD_DIR)/CommandHandler.o \
 	$(BUILD_DIR)/User.o \
-	$(BUILD_DIR)/ConfigParser.o
+	$(BUILD_DIR)/ConfigParser.o \
+	$(BUILD_DIR)/main.o
 
 ConfigParserDeppendencies = $(SRC_DIR)/ConfigParser.cpp \
 	$(HEADERS_DIR)/ConfigParser.hpp \
@@ -25,17 +26,27 @@ CommandHandlerDeppendencies = $(SRC_DIR)/CommandHandler.cpp \
 	$(HEADERS_DIR)/User.hpp
 
 ServerDeppendencies = $(SRC_DIR)/server.cpp \
+	$(HEADERS_DIR)/Server.hpp \
 	$(HEADERS_DIR)/CommandHandler.hpp \
+	$(HEADERS_DIR)/User.hpp 
+
+MainDeppendencies = $(SRC_DIR)/main.cpp \
+	$(HEADERS_DIR)/Server.hpp \
 	$(HEADERS_DIR)/User.hpp \
 	$(HEADERS_DIR)/ConfigParser.hpp
+
+
 
 all: $(BUILD_DIR) $(TARGET)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-$(BUILD_DIR)/server.o: $(ServerDeppendencies)
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/server.cpp -o $(BUILD_DIR)/server.o	
+$(BUILD_DIR)/main.o: $(MainDeppendencies)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/main.cpp -o $(BUILD_DIR)/main.o
+
+$(BUILD_DIR)/Server.o: $(ServerDeppendencies)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/Server.cpp -o $(BUILD_DIR)/Server.o	
 
 $(BUILD_DIR)/CommandHandler.o: $(CommandHandlerDeppendencies)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/CommandHandler.cpp -o $(BUILD_DIR)/CommandHandler.o
