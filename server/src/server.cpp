@@ -25,9 +25,9 @@ void Server::run() {
 
         printf("Successfully connected to a client!\n");  
 
+        CommandHandler *command_handler = new CommandHandler(client_fd, buffer);
         while(RECIEVEING) {
             recv(client_fd, buffer, BUFFER_SIZE, 0);
-            CommandHandler *command_handler = new CommandHandler(client_fd, buffer);
             command_handler -> run_command();
         }
         close(client_fd);

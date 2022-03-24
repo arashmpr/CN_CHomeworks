@@ -30,8 +30,7 @@ class Server {
         int command_fd, data_fd;
 
         std::vector <std::string> protected_files;
-
-
+        
         int run_socket(int port);
 
 };

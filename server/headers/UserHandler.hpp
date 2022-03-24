@@ -10,7 +10,7 @@
 
 class UserHandler {
     public:
-        static User* find_user(char *username);
+        static User* find_user(std::string username);
         static std::vector<User*> users;
 };
 
