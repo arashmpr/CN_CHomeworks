@@ -15,6 +15,7 @@
 #include "User.hpp"
 #include "UserHandler.hpp"
 #include "ErrorHandler.hpp"
+#include "Logger.hpp"
 
 #define BUFFER_SIZE 1024
 
@@ -32,6 +33,8 @@ class CommandHandler {
 
         bool is_user_logged_in;
         bool is_user_ready_to_enter_password;
+
+        Logger *logger;
 
         void log_in_handler();
         void password_handler();

@@ -3,6 +3,7 @@
 CommandHandler::CommandHandler(int _client_fd, char* _cmd_line) {
     client_fd = _client_fd;
     cmd_line = _cmd_line;
+    logger = new Logger();
 }
 
 void CommandHandler::run_command() {
@@ -71,6 +72,8 @@ void CommandHandler::password_handler() {
     if (password == found_user_password) {
         is_user_logged_in = true;
         is_user_ready_to_enter_password = false;
+        
+        logger -> add_log("User '" + found_user -> get_username() + "' logged in successfully.");
         std::string response = RESPONSE_USER_LOGGED_IN_PROCEED_TEXT;
         send(client_fd, response.data(), response.size(), 0);
     } else {
@@ -85,7 +88,8 @@ void CommandHandler::pwd_handler() {
 
     char directory[BUFFER_SIZE];
     if(getcwd(directory, sizeof(directory)) != NULL) {
-        if (send(client_fd, directory, sizeof(directory), 0) < 0) {
+        std::string response = "257: '" + std::string(directory) + "'\n";
+        if (send(client_fd, response.data(), response.size(), 0) < 0) {
 			std::cout<<"hoho"<<std::endl; 
         }
     } else {
@@ -104,6 +108,7 @@ void CommandHandler::mkd_handler(char* path_file) {
         exit(1);
     }
     printf("%s created.\n", path_file);
+    logger -> add_log("User '" + found_user -> get_username() + "' created a file in '" + std::string(path_file) +"' successfully.");
 }
 
 void CommandHandler::delete_file_handler(char* path_file) {
@@ -117,6 +122,7 @@ void CommandHandler::delete_file_handler(char* path_file) {
         exit(1);
     }
     printf("%s deleted.\n", path_file);
+    logger -> add_log("User '" + found_user -> get_username() + "' deleted the file '" + std::string(path_file) +"' successfully.");
 
 }
 
@@ -131,6 +137,7 @@ void CommandHandler::delete_dir_handler(char* path_file) {
         exit(1);
     }
     printf("%s deleted.\n", path_file);
+    logger -> add_log("User '" + found_user -> get_username() + "' deleted the directory '" + std::string(path_file) +"' successfully.");
 }
 
 void CommandHandler::ls_handler() {
@@ -166,6 +173,7 @@ void CommandHandler::cwd_handler(char* path_file) {
         exit(1);
     }
     printf("Successful change.\n");
+    logger -> add_log("User '" + found_user -> get_username() + "' changed the working directory to '" + std::string(path_file) +"' successfully.");
 }
 
 void CommandHandler::rename_file_handler(const char* old_name, const char* new_name) {
@@ -179,4 +187,5 @@ void CommandHandler::rename_file_handler(const char* old_name, const char* new_n
         exit(1);
     }
     printf("Successful change.\n");
+    logger -> add_log("User '" + found_user -> get_username() + "' rename file from '" + std::string(old_name) +"' to '" + std::string(new_name) + "'successfully.");
 }
