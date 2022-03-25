@@ -14,6 +14,7 @@
 
 #include <CommandHandler.hpp>
 #include <User.hpp>
+#include <ErrorHandler.hpp>
 
 #define BUFFER_SIZE 1024
 #define COMMAND_CHANNEL_PORT 9009
