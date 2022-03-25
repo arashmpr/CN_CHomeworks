@@ -8,5 +8,5 @@ User* UserHandler::find_user(char* username) {
         if(user->get_username() == username)
             return user;
     }
-    throw INVALID_USERNAME_OR_PASSWORD;
+    throw InvalidUsernameOrPassword();
 }

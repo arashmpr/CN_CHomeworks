@@ -1,17 +1,20 @@
 #ifndef COMMAND_HANDLER_HPP
 #define COMMAND_HANDLER_HPP
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <dirent.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "Response.hpp"
 #include "User.hpp"
 #include "UserHandler.hpp"
-#include "Exception.hpp"
+#include "ErrorHandler.hpp"
 
 #define BUFFER_SIZE 1024
 

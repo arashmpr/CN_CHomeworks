@@ -11,13 +11,9 @@ void CommandHandler::run_command() {
 
         if (strcmp(cmd_line, "user") == 0) {
             log_in_handler();
-        } 
-
-        if (strcmp(cmd_line, "pass") == 0) {
+        } else if (strcmp(cmd_line, "pass") == 0) {
             password_handler();
-        } 
-    
-        if (strcmp(cmd_line, "pwd") == 0) {
+        } else if (strcmp(cmd_line, "pwd") == 0) {
             pwd_handler();
             exit(1);
         } 
@@ -42,60 +38,64 @@ void CommandHandler::run_command() {
             char* old_name = strtok(NULL, " ");
             char* new_name = strtok(NULL, " ");
             rename_file_handler(old_name, new_name);
+        } else {
+            throw SyntaxErrorInParametersOrArguments();
         }
-    } catch(int error_num) {
-        Exception *error = new Exception(error_num);
-        error -> print_error();
+    } catch(std::exception &er) {
+        std::string error = er.what();
+        send(client_fd, error.data(), error.size(), 0);
     }
-
 }
 
 void CommandHandler::log_in_handler() {
     char* username = strtok(NULL, " ");
-    if (is_user_logged_in) {
-        std::cout << "User already logged in!" << std::endl;
+    found_user = UserHandler::find_user(username);
+    if(found_user) {
+        is_user_ready_to_enter_password = true;
+        std::string response = RESPONSE_USERNAME_OKAY_NEED_PASSWORD_TEXT;
+        send(client_fd, response.data(), response.size(), 0);
     } else {
-        found_user = UserHandler::find_user(username);
-        if(found_user) {
-            std::cout << "User name okay, need password." << std::endl;
-            is_user_ready_to_enter_password = true;
-        } else {
-            std::cout << "User not found!" << std::endl;
-        }
-            
+        throw InvalidUsernameOrPassword();
     }
 }
 
 void CommandHandler::password_handler() {
+    if (!is_user_ready_to_enter_password) {
+        throw BadSequenceOfCommands();
+    }
+
     char* password = strtok(NULL, " ");
 
     std::string found_user_password = found_user -> get_password();
 
     if (password == found_user_password) {
-        std::cout << "User logged in, proceed. Log out if appropriate." << std::endl;
         is_user_logged_in = true;
         is_user_ready_to_enter_password = false;
+        std::string response = RESPONSE_USER_LOGGED_IN_PROCEED_TEXT;
+        send(client_fd, response.data(), response.size(), 0);
     } else {
-        std::cout << "Pass is incorrect." << std::endl;
+        throw InvalidUsernameOrPassword();
     }
 }
 
 void CommandHandler::pwd_handler() {
     if(!is_user_logged_in) {
-        throw INVALID_USERNAME_OR_PASSWORD;
+        throw NeedAccountForLogin();
     }
 
     char directory[BUFFER_SIZE];
     if(getcwd(directory, sizeof(directory)) != NULL) {
-        printf("%s\n", directory);
+        if (send(client_fd, directory, sizeof(directory), 0) < 0) {
+			std::cout<<"hoho"<<std::endl; 
+        }
     } else {
-        printf("Error in working directory!\n");
+        throw Error();
     }
 }
 
 void CommandHandler::mkd_handler(char* path_file) {
     if(!is_user_logged_in) {
-        throw INVALID_USERNAME_OR_PASSWORD;
+        throw NeedAccountForLogin();
     }
 
     int status = mkdir(path_file, 0777);
@@ -108,7 +108,7 @@ void CommandHandler::mkd_handler(char* path_file) {
 
 void CommandHandler::delete_file_handler(char* path_file) {
     if(!is_user_logged_in) {
-        throw INVALID_USERNAME_OR_PASSWORD;
+        throw NeedAccountForLogin();
     }
 
     int status = unlink(path_file);
@@ -122,7 +122,7 @@ void CommandHandler::delete_file_handler(char* path_file) {
 
 void CommandHandler::delete_dir_handler(char* path_file) {
     if(!is_user_logged_in) {
-        throw INVALID_USERNAME_OR_PASSWORD;
+        throw NeedAccountForLogin();
     }
 
     int status = rmdir(path_file);
@@ -135,7 +135,7 @@ void CommandHandler::delete_dir_handler(char* path_file) {
 
 void CommandHandler::ls_handler() {
     if(!is_user_logged_in) {
-        throw INVALID_USERNAME_OR_PASSWORD;
+        throw NeedAccountForLogin();
     }
 
     DIR *parent_dir;
@@ -157,7 +157,7 @@ void CommandHandler::ls_handler() {
 
 void CommandHandler::cwd_handler(char* path_file) {
     if(!is_user_logged_in) {
-        throw INVALID_USERNAME_OR_PASSWORD;
+        throw NeedAccountForLogin();
     }
 
     int status = chdir(path_file);
@@ -170,7 +170,7 @@ void CommandHandler::cwd_handler(char* path_file) {
 
 void CommandHandler::rename_file_handler(const char* old_name, const char* new_name) {
     if(!is_user_logged_in) {
-        throw INVALID_USERNAME_OR_PASSWORD;
+        throw NeedAccountForLogin();
     }
 
     int status = rename(old_name, new_name);

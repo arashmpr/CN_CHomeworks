@@ -1,6 +1,7 @@
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <dirent.h>
@@ -17,6 +18,7 @@ int main() {
     int client_fd;
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
+    char recv_buf[BUFFER_SIZE] = {0};
 
     //Creating a server socket
     if(!(client_fd = socket(AF_INET, SOCK_STREAM, 0))) {
@@ -33,6 +35,7 @@ int main() {
 		printf("Failed to connect to the server!\nExiting\n");
         exit(1);
     }
+    
 
 	while(RUNNING){
         bzero(buffer, BUFFER_SIZE);
@@ -49,6 +52,12 @@ int main() {
         } else {
             send(client_fd, buffer, BUFFER_SIZE, 0);
         }
+
+        bzero(recv_buf, BUFFER_SIZE);
+        if ((recv(client_fd, recv_buf, sizeof(recv_buf), 0)) < 0) {
+            std::cout<<"kir shodam be khoda\n";
+        }
+        std::cout << recv_buf;
     }
 
 
