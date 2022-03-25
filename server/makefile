@@ -13,6 +13,7 @@ OBJECTS = \
 	$(BUILD_DIR)/UserHandler.o \
 	$(BUILD_DIR)/ConfigParser.o \
 	$(BUILD_DIR)/ErrorHandler.o \
+	$(BUILD_DIR)/Logger.o \
 	$(BUILD_DIR)/main.o
 
 ConfigParserDeppendencies = $(SRC_DIR)/ConfigParser.cpp \
@@ -26,6 +27,9 @@ UserDeppendencies = $(SRC_DIR)/User.cpp \
 ErrorHandlerDeppendencies = $(SRC_DIR)/ErrorHandler.cpp \
 	$(HEADERS_DIR)/ErrorHandler.hpp
 
+LoggerDeppendencies = $(SRC_DIR)/Logger.cpp \
+	$(HEADERS_DIR)/Logger.hpp
+
 UserHandlerDeppendencies = $(SRC_DIR)/UserHandler.cpp \
 	$(HEADERS_DIR)/UserHandler.hpp \
 	$(HEADERS_DIR)/ErrorHandler.hpp
@@ -33,7 +37,8 @@ UserHandlerDeppendencies = $(SRC_DIR)/UserHandler.cpp \
 CommandHandlerDeppendencies = $(SRC_DIR)/CommandHandler.cpp \
 	$(HEADERS_DIR)/CommandHandler.hpp \
 	$(HEADERS_DIR)/User.hpp \
-	$(HEADERS_DIR)/ErrorHandler.hpp
+	$(HEADERS_DIR)/ErrorHandler.hpp \
+	$(HEADERS_DIR)/Logger.hpp 
 
 ServerDeppendencies = $(SRC_DIR)/server.cpp \
 	$(HEADERS_DIR)/Server.hpp \
@@ -76,6 +81,9 @@ $(BUILD_DIR)/ConfigParser.o: $(ConfigParserDeppendencies)
 
 $(BUILD_DIR)/ErrorHandler.o: $(ErrorHandlerDeppendencies)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/ErrorHandler.cpp -o $(BUILD_DIR)/ErrorHandler.o	
+
+$(BUILD_DIR)/Logger.o: $(LoggerDeppendencies)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/Logger.cpp -o $(BUILD_DIR)/Logger.o	
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET)
