@@ -39,26 +39,15 @@ int main() {
 
 	while(RUNNING){
         bzero(buffer, BUFFER_SIZE);
+        bzero(recv_buf, BUFFER_SIZE);
 		fgets(buffer, BUFFER_SIZE, stdin);
         buffer[strcspn(buffer, "\n")] = 0;
 
-        char cmd_line[BUFFER_SIZE];
-		strcpy(cmd_line,buffer);
-		char* cmd = strtok(cmd_line," ");
+        send(client_fd, buffer, BUFFER_SIZE, 0);
+        recv(client_fd, recv_buf, sizeof(recv_buf), 0);
 
-        if (strcmp(cmd, "pwd") == 0) {
-            send(client_fd, buffer, BUFFER_SIZE, 0);
-            exit(1);
-        } else {
-            send(client_fd, buffer, BUFFER_SIZE, 0);
-        }
-
-        bzero(recv_buf, BUFFER_SIZE);
-        if ((recv(client_fd, recv_buf, sizeof(recv_buf), 0)) < 0) {
-            std::cout<<"kir shodam be khoda\n";
-        }
         std::cout << recv_buf;
     }
 
-
+    close(client_fd);
 }
