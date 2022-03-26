@@ -211,4 +211,5 @@ void CommandHandler::quit_handler() {
     send(client_fd, response.data(), response.size(), 0);
 
     close(client_fd);
+    exit(1):
 }
