@@ -45,6 +45,7 @@ class CommandHandler {
         void ls_handler();
         void cwd_handler(char* path_file);
         void rename_file_handler(const char* old_name, const char* new_name);
+        void quit_handler();
 };
 
 #endif
