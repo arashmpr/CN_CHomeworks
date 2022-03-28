@@ -3,6 +3,7 @@
 CommandHandler::CommandHandler(int _client_fd, char* _cmd_line) {
     client_fd = _client_fd;
     cmd_line = _cmd_line;
+    current_directory = getenv("PWD");
     logger = new Logger();
 }
 
@@ -95,8 +96,6 @@ void CommandHandler::pwd_handler() {
         throw NeedAccountForLogin();
     }
 
-    std::string current_directory = getenv("PWD");
-
     std::string response = "257: " + current_directory + "\n";
     send(client_fd, response.data(), response.size(), 0);
 }
@@ -177,6 +176,7 @@ void CommandHandler::cwd_handler(char* path_file) {
     if (status == -1) {
         throw Error();
     }
+    current_directory = path_file;
     logger -> add_log("User '" + found_user -> get_username() + "' changed the working directory to '" + std::string(path_file) +"' successfully.");
 
     std::string response = "250: Successful change.\n";
@@ -211,5 +211,4 @@ void CommandHandler::quit_handler() {
     send(client_fd, response.data(), response.size(), 0);
 
     close(client_fd);
-    exit(1);
 }

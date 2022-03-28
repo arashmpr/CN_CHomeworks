@@ -28,6 +28,7 @@ class CommandHandler {
 
         char* cmd_line;
         char* cmd;
+        std::string current_directory;
 
         User* found_user;
 
