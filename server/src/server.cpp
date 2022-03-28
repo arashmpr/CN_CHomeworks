@@ -27,10 +27,10 @@ void Server::run() {
 
         CommandHandler *command_handler = new CommandHandler(client_fd, buffer);
         while(RECIEVEING) {
+            std::cout<<"hehe"<<std::endl;
             recv(client_fd, buffer, BUFFER_SIZE, 0);
             command_handler -> run_command();
         }
-        close(client_fd);
     }
     close(command_fd);
 }
