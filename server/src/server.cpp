@@ -5,6 +5,7 @@ Server::Server(std::vector <std::string> _protected_files) {
 }
 
 void Server::run() {
+    fd_set master_set, working_set;
     command_fd = run_socket(COMMAND_CHANNEL_PORT);
     data_fd = run_socket(DATA_CHANNEL_PORT);
 
@@ -12,27 +13,38 @@ void Server::run() {
 
     char buffer[BUFFER_SIZE];
 
+    FD_ZERO(&master_set);
+    FD_SET(command_fd, &master_set);
+    printf("Waiting for connection...\n");
+
     while(RUNNING) {
+        working_set = master_set;
+        select(FD_SETSIZE, &working_set, NULL, NULL, NULL);
+
         int client_fd;
         int addr_len = sizeof(client_address);
-        printf("Waiting for connection...\n");
         
-        //accepting a new connection
-        if(!(client_fd = accept(command_fd, (struct sockaddr*) &client_address, (socklen_t*) &addr_len))) {
-            printf("Couldn't accept the client!\n");
-            continue;
+        for (int i = 0 ; i < FD_SETSIZE ; i++) {
+            if(FD_ISSET(i, &working_set)) {
+                if(i == command_fd) { //accepting a new connection
+                    if(!(client_fd = accept(command_fd, (struct sockaddr*) &client_address, (socklen_t*) &addr_len))) {
+                        printf("Couldn't accept the client!\n");
+                    }
+                    printf("Successfully connected to a client!\n");
+                    FD_SET(client_fd, &master_set);
+                }
+                else {
+                    CommandHandler *command_handler = new CommandHandler(i, buffer);
+                    while(RECIEVEING) {
+                        recv(i, buffer, BUFFER_SIZE, 0);
+                        command_handler -> run_command();
+                    }
+                    FD_CLR(i, &master_set);
+                }
+            }
         }
-
-        printf("Successfully connected to a client!\n");  
-
-        CommandHandler *command_handler = new CommandHandler(client_fd, buffer);
-        while(RECIEVEING) {
-            std::cout<<"hehe"<<std::endl;
-            recv(client_fd, buffer, BUFFER_SIZE, 0);
-            command_handler -> run_command();
-        }
+        
     }
-    close(command_fd);
 }
 
 int Server::run_socket(int port) {
